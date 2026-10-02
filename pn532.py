@@ -43,37 +43,18 @@ class PN532():
         card_data = self.searchcard()
         time.sleep(0.2)
         if len(card_data) > 6:
-            part_a = str(hex(card_data[19])).lstrip("0").lstrip("x")
-            if len(part_a) == 2:
-                #return part_a
-                pass
-            else:
-                part_a = "0"+part_a
-                #return part_a
-            part_b = str(hex(card_data[20])).lstrip("0").lstrip("x")
-            if len(part_b) ==2 :
-                #return part_b
-                pass
-            else:
-                part_b = "0"+part_b   
-                #return part_b
-            part_c = str(hex(card_data[21])).lstrip("0").lstrip("x")
-            if len(part_c) ==2 :
-                #return part_c
-                pass
-            else:
-                part_c = "0"+part_c
-                #return part_c
-            part_d = str(hex(card_data[22])).lstrip("0").lstrip("x")
-            if len(part_d) ==2 :
-                #return part_d
-                pass
-            else:
-                part_d = "0"+part_d
-                #return part_d
-            finalnumber = part_a + part_b + part_c + part_d
-            return(finalnumber)
-    
+            return self._format_card_number(card_data)
+
+    def _format_card_number(self, card_data):
+        """Format the four legacy UID byte positions without changing validation."""
+        number = ""
+        for index in range(19, 23):
+            part = str(hex(card_data[index])).lstrip("0").lstrip("x")
+            if len(part) != 2:
+                part = "0" + part
+            number += part
+        return number
+
     def filter(self):
         import socket
         import time
@@ -95,36 +76,7 @@ class PN532():
             card_data = self.searchcard()
             time.sleep(0.2)
             if len(card_data) > 6:
-                part_a = str(hex(card_data[19])).lstrip("0").lstrip("x")
-                if len(part_a) == 2:
-                    #return part_a
-                    pass
-                else:
-                    part_a = "0"+part_a
-                    #return part_a
-                part_b = str(hex(card_data[20])).lstrip("0").lstrip("x")
-                if len(part_b) ==2 :
-                    #return part_b
-                    pass
-                else:
-                    part_b = "0"+part_b   
-                    #return part_b
-                part_c = str(hex(card_data[21])).lstrip("0").lstrip("x")
-                if len(part_c) ==2 :
-                    #return part_c
-                    pass
-                else:
-                    part_c = "0"+part_c
-                    #return part_c
-
-                part_d = str(hex(card_data[22])).lstrip("0").lstrip("x")
-                if len(part_d) ==2 :
-                    #return part_d
-                    pass
-                else:
-                    part_d = "0"+part_d
-                    #return part_d
-                finalnumber = part_a + part_b + part_c + part_d
+                finalnumber = self._format_card_number(card_data)
                 if finalnumber in self.the_verify().keys():
                     global door_state
                     door_state = True
